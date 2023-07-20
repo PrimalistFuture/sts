@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal</title>
+</head>
+<body>
+  <h1>Journal</h1>
+
+  <h2>7.5.23</h2>
+
+  <p>Goals: I want to write a script that will go through my .run files and then put that data in psql. I have to figure out exactly how to write the script, and also what table schema to use.</p>
+
+  <p>Progress: The .run files appear to be executable only on Linux or Ubuntu? Not close enough to mac architecture to run them.</p>
+
+  <p>Found an extension called C/C++ compile run in VSCode that might be needed. It needed me to install clang, which I believe was already installed via xcode or something.</p>
+
+  <p>Not sure the extension did anything. I am getting the same error. When I chmod 755 1681954325.run and then ./1681954325.run in the terminal it starts to read the file before hitting an error: line 1: gold_per_floor:[211: command not found. </p>
+
+  <p>PIVOT: rather than trying to read the file in the terminal, let's make a python script to do it for us.</p>
+
+  <p>Lesson: We wrote a very simple open script in python and used it on a real run. I think we accidentally overwrote that run. So now we are doing it on a TEST folder and copy of a real run. Lesson learned.</p>
+
+  <p>But the script now seems to give us access to this giant file in ipython with run aggregator.py and then file.read(). For some reason repeated uses return an empty string. I notice the return dict is actually a string. Is this an issue? It is not a string in the .run. I don't think I am going to be able to dig into the dict because it is not actually a dict.</p>
+
+  <p>Lesson: The file object must be json. I imported that and changed my script. Now the file object is drillable in ipython. </p>
+
+  <p>dir(file object) has been super helpful. </p>
+
+  <p>Remember python dicts must be accessed with brackets file['gold'].</p>
+
+  <p>NEXT: lets make a table to store file object playtime. Columns will be .run file name, character, time in seconds, floor reached. Research TABLE schema set up and creation. </p>
+
+  <h2>7.6.23</h2>
+
+  <p>God I do not remember how to create a database and table.</p>
+
+  <p>I am trying to create a loop that will go through the files in my test folder and get the playtime from each. First I have to decode it from binary, then I have to open it and get the file_object['playtime']</p>
+
+  <p>BUG: I was trying to open the file without the rest of the path, and even though I was in the correct directory, open() seems to need the path as well. This is because aggregator.py is not in the test folder. So I needed to tell it to go up.</p>
+
+  <p>BUG: Recall yesterday I accidentally overwrote a .run file to have nothing in it. No big deal, it was a copy anyway. But it was causing my script to error out because file_object['playtime'] didn't exist. JS would have been fine with it, but not python.</p>
+
+  <p>Okay so right now my script executes immediately as the file is opened. It might be a good idea to re-write this as a function so that it can be run on demand, which would scale as the script gets bigger. But for getting the playtime, this is fine.</p>
+
+  <p>Character is stored as 'character_chosen'</p>
+
+  <p>NEXT: now we need to figure out how to add this info to a db. </p>
+
+  <h2>7.7.23</h2>
+
+  <p>I am not sure I need it, or that I should even be using it, but I installed Flask and SQLAlchemy. I want this to be a webapp at some point, so I guess it is fine.</p>
+
+  <p>BUG: My vscode was having problems interpreting my imports even though they were located in the correct folder as shown by pip --version and pip show flask. I had to change my python interpreter back to python 3.10 in vscode. </p>
+
+  <p>DAMN HE'S GOOD: When I loaded ipython in the terminal, it told me to install ipython in the venv. But I was already in the venv, so I guessed this was it telling me that I wasn't actually using the correct venved ipython. Closed the terminal window, hit it with a hash -r and which ipython3 showed I was now using the right ipython.</p>
+
+  <p>I think I have my database model set up. Now I need to adapt my aggregator.py loop to input the required data into the table.</p>
+
+  <p>I created a func to add run data to the db in app.py. But I don't want to execute it on the whole test folder until I can confirm it will work for a single file.</p>
+
+  <p>BUG: I created a quick seed.py file to add some sample data to the table. But I forgot to change the name of the table in my app.py so I was getting an error telling me some tablename that I never chose didn't exist. Which was true.</p>
+
+  <p>Made a quick function to add a single run to db before doing the full loop. Worked perfectly.</p>
+
+  <p>DAMN HE'S GOOD: Full loop worked perfectly on the test folder.</p>
+
+  <p>NEXT: Build the webappy side of this so I can view that playtime data somewhere. For now, I might just serve it up from flask directly, but at some point I would like to use React.</p>
+
+</body>
+</html>
