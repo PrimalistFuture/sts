@@ -14,7 +14,8 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 
 def add_run_data(obj):
-    """Add some data from a .run to a table"""
+    """Add some data from a .run to a table."""
+    """Why is this here and not in aggregator? Or why does aggregator exist?"""
 
     character = obj['character_chosen']
     playtime = obj['playtime']
